@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "HlSOyR0OWI9y1EO7JDE1caUABxbLAl+rMymnre2nHlK6JmCOzveFJkIfA7QwHrO9mj/QO86DOP8gzEbbX11Adg==",
+  "dgSpecHash": "MbdGk8rmgQ2h9SMw7K+yDPdphoceJ+J8WyEt8eiehDme5S1LBWeOeRy3hFzwin0S82P5u7HnL7fv4MulPLAApg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Dajana\\OneDrive\\Desktop\\pusgs-projekat\\Backend\\Backend\\Backend.csproj",
+  "projectFilePath": "C:\\Users\\Dajana\\OneDrive\\Desktop\\WEB\\pusgs-projekat\\Backend\\Backend\\Backend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Dajana\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\Dajana\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
