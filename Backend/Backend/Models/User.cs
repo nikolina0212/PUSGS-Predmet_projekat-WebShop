@@ -18,5 +18,6 @@ namespace Backend.Models
         public UserTypes UserType { get; set; }
         public List<Order> Orders { get; set; }
         public List<Article> Articles { get; set; }
+        public bool Verified { get; set; }
     }
 }
