@@ -14,6 +14,10 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using MailKit.Security;
+using MimeKit.Text;
+using MimeKit;
+using MailKit.Net.Smtp;
 
 namespace Backend.Services
 {
@@ -22,12 +26,14 @@ namespace Backend.Services
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IConfigurationSection _secretKey;
+        private readonly IConfigurationSection _emailConfig;
 
         public UserService(IMapper mapper, IUnitOfWork unitOfWork, IConfiguration configuration)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _secretKey = configuration.GetSection("SecretKey");
+            _emailConfig = configuration.GetSection("EmailConfig");
         }
 
         public async Task<TokenDto> SignUpUser(UserSignUpDto signupUser)
@@ -152,6 +158,30 @@ namespace Backend.Services
 
             string token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
             return token;
+        }
+
+        public async Task SendMail(string reciever, string subject, string body)
+        {
+            var message = new MimeMessage();
+
+            var host = _emailConfig.GetValue<string>("Host");
+            var username = _emailConfig.GetValue<string>("Username");
+            var password = _emailConfig.GetValue<string>("Password");
+
+            message.From.Add(MailboxAddress.Parse(username));
+            message.To.Add(MailboxAddress.Parse(reciever));
+            message.Subject = subject;
+
+            message.Body = new TextPart(TextFormat.Plain)
+            {
+                Text = body
+            };
+
+            using var smtp = new SmtpClient();
+            await smtp.ConnectAsync(host, 587, SecureSocketOptions.StartTls);
+            await smtp.AuthenticateAsync(username, password);
+            await smtp.SendAsync(message);
+            await smtp.DisconnectAsync(true);
         }
 
         #endregion
