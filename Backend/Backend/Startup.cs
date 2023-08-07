@@ -85,6 +85,7 @@ namespace Backend
             options.UseSqlServer(Configuration.GetConnectionString("DbConnectionString")));
 
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IArticleService, ArticleService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             var mapperConfig = new MapperConfiguration(mc =>

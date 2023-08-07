@@ -18,6 +18,7 @@ using MailKit.Security;
 using MimeKit.Text;
 using MimeKit;
 using MailKit.Net.Smtp;
+using static Org.BouncyCastle.Asn1.Cmp.Challenge;
 
 namespace Backend.Services
 {
@@ -48,6 +49,12 @@ namespace Backend.Services
                     {
                         user.Verified = true;
                     }
+                    else
+                    {
+                        Random random = new();
+                        user.SellerFee = random.Next(200, 501);
+                    }
+
 
                     user.Password = BCrypt.Net.BCrypt.HashPassword(signupUser.Password);
                     await _unitOfWork.Users.Create(user);

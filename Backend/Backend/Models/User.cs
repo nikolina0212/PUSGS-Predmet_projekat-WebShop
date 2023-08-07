@@ -19,5 +19,6 @@ namespace Backend.Models
         public List<Order> Orders { get; set; }
         public List<Article> Articles { get; set; }
         public bool Verified { get; set; }
+        public double SellerFee { get; set; }
     }
 }

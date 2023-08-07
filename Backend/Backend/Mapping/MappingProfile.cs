@@ -8,9 +8,14 @@ namespace Backend.Mapping
     {
         public MappingProfile()
         {
+            // --- users ---
             CreateMap<User, UserSignUpDto>().ReverseMap();
             CreateMap<User, UserLoginDto>().ReverseMap();
             CreateMap<User, UserProfileInfoDto>().ReverseMap();
+
+            // --- articles ---
+            CreateMap<Article, ArticleDto>().ReverseMap();
+            CreateMap<Article, AddArticleDto>().ReverseMap();
         }
     }
 }
