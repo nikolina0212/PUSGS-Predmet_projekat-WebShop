@@ -19,6 +19,8 @@ using MimeKit.Text;
 using MimeKit;
 using MailKit.Net.Smtp;
 using static Org.BouncyCastle.Asn1.Cmp.Challenge;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Backend.Services
 {
@@ -28,13 +30,14 @@ namespace Backend.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IConfigurationSection _secretKey;
         private readonly IConfigurationSection _emailConfig;
-
-        public UserService(IMapper mapper, IUnitOfWork unitOfWork, IConfiguration configuration)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public UserService(IMapper mapper, IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _secretKey = configuration.GetSection("SecretKey");
             _emailConfig = configuration.GetSection("EmailConfig");
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public async Task<TokenDto> SignUpUser(UserSignUpDto signupUser)
@@ -55,12 +58,25 @@ namespace Backend.Services
                         user.SellerFee = random.Next(200, 501);
                     }
 
-
                     user.Password = BCrypt.Net.BCrypt.HashPassword(signupUser.Password);
+
                     await _unitOfWork.Users.Create(user);
                     await _unitOfWork.SaveChangesAsync();
 
+                    if (signupUser.Image != null && signupUser.Image.Length > 0)
+                    {
+                        string imagePath = await SaveImage(signupUser.Image,
+                            Path.Combine(_webHostEnvironment.WebRootPath, "Images"), user.Id);
 
+                        user.Image = imagePath;
+                    }
+                    else
+                    {
+                        string defaultImagePath = Path.Combine("Images", "default-user.png");
+                        user.Image = defaultImagePath;
+                    }
+
+                    await _unitOfWork.SaveChangesAsync();
                     return new TokenDto { Token = CreateToken(user.Id, user.UserType, user.Verified) };
                 }
                 else
@@ -189,6 +205,20 @@ namespace Backend.Services
             await smtp.AuthenticateAsync(username, password);
             await smtp.SendAsync(message);
             await smtp.DisconnectAsync(true);
+        }
+
+        public static async Task<string> SaveImage(IFormFile imageFile, string targetFolderPath, long id)
+        {
+            string fileName = id.ToString() + Path.GetExtension(imageFile.FileName);
+
+            string filePath = Path.Combine(targetFolderPath, fileName);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(fileStream);
+            }
+
+            return filePath;
         }
 
         #endregion

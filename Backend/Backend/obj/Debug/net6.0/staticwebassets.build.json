@@ -1,11 +1,37 @@
 {
   "Version": 1,
-  "Hash": "n5xgAQ6zUIaWw0GRiBAnxS+iKccCeaRf+F00sBYdNq4=",
+  "Hash": "6aBjMTWTUz2UPthRhlsq2qEA/cXOoK+ey8VXFslJepk=",
   "Source": "Backend",
   "BasePath": "_content/Backend",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": []
+  "DiscoveryPatterns": [
+    {
+      "Name": "Backend\\wwwroot",
+      "Source": "Backend",
+      "ContentRoot": "C:\\Users\\Dajana\\OneDrive\\Desktop\\WEB\\pusgs-projekat\\Backend\\Backend\\wwwroot\\",
+      "BasePath": "_content/Backend",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\Dajana\\OneDrive\\Desktop\\WEB\\pusgs-projekat\\Backend\\Backend\\wwwroot\\Images\\default-user.png",
+      "SourceId": "Backend",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Dajana\\OneDrive\\Desktop\\WEB\\pusgs-projekat\\Backend\\Backend\\wwwroot\\",
+      "BasePath": "_content/Backend",
+      "RelativePath": "Images/default-user.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Images\\default-user.png"
+    }
+  ]
 }

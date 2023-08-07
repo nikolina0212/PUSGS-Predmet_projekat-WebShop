@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 
-namespace Backend.Utils
+namespace Backend.Shared
 {
     public static class UserInformation
     {
