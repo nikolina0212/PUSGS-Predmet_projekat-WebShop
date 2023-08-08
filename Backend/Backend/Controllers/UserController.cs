@@ -113,5 +113,61 @@ namespace Backend.Controllers
                 return BadRequest();
             }
         }
+
+        [HttpGet("all")]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            try
+            {
+                return Ok(await _userService.GetUsers());
+            }
+            catch (InvalidDataException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPatch("{sellerId}/accept")]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> AcceptSeller([FromRoute] long sellerId)
+        {
+            try
+            {
+                await _userService.AcceptSeller(sellerId);
+                return Ok();
+            }
+            catch (InvalidDataException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPatch("{sellerId}/reject")]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> RejectSeller([FromRoute] long sellerId)
+        {
+            try
+            {
+                await _userService.RejectSeller(sellerId);
+                return Ok();
+            }
+            catch (InvalidDataException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
     }
 }

@@ -19,6 +19,12 @@ namespace Backend.Infrastructure.Configurations
                        x => Enum.Parse<UserTypes>(x)
                    );
 
+            builder.Property(x => x.VerificationStatus)
+                   .HasConversion(
+                       x => x.ToString(),
+                       x => Enum.Parse<VerificationStatus>(x)
+                   );
+
             builder.HasIndex(x => x.Email).IsUnique();
         }
     }

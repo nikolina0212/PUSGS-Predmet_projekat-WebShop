@@ -20,5 +20,6 @@ namespace Backend.Models
         public List<Article> Articles { get; set; }
         public bool Verified { get; set; }
         public double SellerFee { get; set; }
+        public VerificationStatus VerificationStatus { get; set; }
     }
 }

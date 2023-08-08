@@ -1,4 +1,5 @@
 ﻿using Backend.DTO;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Backend.Interfaces
@@ -10,5 +11,8 @@ namespace Backend.Interfaces
         Task<UserProfileInfoDto> GetProfile(long userId);
         Task<UserProfileInfoDto> UpdateProfile(long userId, UpdateProfileDto newProfile);
         Task ChangePassword(long id, PasswordDto newPassword);
+        Task<List<UserInfoDto>> GetUsers();
+        Task AcceptSeller(long sellerId);
+        Task RejectSeller(long sellerId);
     }
 }

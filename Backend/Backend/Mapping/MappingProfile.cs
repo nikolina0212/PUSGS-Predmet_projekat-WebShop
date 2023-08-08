@@ -12,6 +12,7 @@ namespace Backend.Mapping
             CreateMap<User, UserSignUpDto>().ReverseMap();
             CreateMap<User, UserLoginDto>().ReverseMap();
             CreateMap<User, UserProfileInfoDto>().ReverseMap();
+            CreateMap<User, UserInfoDto>().ReverseMap();
 
             // --- articles ---
             CreateMap<Article, ArticleDto>().ReverseMap();

@@ -21,6 +21,7 @@ using MailKit.Net.Smtp;
 using static Org.BouncyCastle.Asn1.Cmp.Challenge;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
+using System.Linq;
 
 namespace Backend.Services
 {
@@ -51,11 +52,13 @@ namespace Backend.Services
                     if (!signupUser.UserType.Equals(UserTypes.Seller))
                     {
                         user.Verified = true;
+                        user.VerificationStatus = VerificationStatus.Finished;
                     }
                     else
                     {
                         Random random = new();
                         user.SellerFee = random.Next(200, 501);
+                        user.VerificationStatus = VerificationStatus.Pending;
                     }
 
                     user.Password = BCrypt.Net.BCrypt.HashPassword(signupUser.Password);
@@ -111,7 +114,6 @@ namespace Backend.Services
             }
         }
 
-
         public async Task<UserProfileInfoDto> GetProfile(long userId)
         {
             var user = await _unitOfWork.Users.GetById(userId);
@@ -148,6 +150,40 @@ namespace Backend.Services
 
             user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword.NewPassword);
             await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task<List<UserInfoDto>> GetUsers()
+        {
+            var users = await _unitOfWork.Users.SelectAll(x => !x.UserType.Equals(UserTypes.Administrator));
+            return users.Any()
+                ? _mapper.Map<List<UserInfoDto>>(users)
+                : throw new InvalidDataException("No users.");
+        }
+
+        public async Task AcceptSeller(long sellerId)
+        {
+            var seller = await _unitOfWork.Users.GetById(sellerId) ??
+                throw new InvalidDataException("Seller does not exists.");
+
+            seller.Verified = true;
+            seller.VerificationStatus = VerificationStatus.Finished;
+            await _unitOfWork.SaveChangesAsync();
+
+            await SendMail(seller.Email, "Registration accepted", $"Hello {seller.FirstName}." +
+                $" Administrator has accepted your registration request." +
+                $" You can now start using all application functionalities.");
+        }
+
+        public async Task RejectSeller(long sellerId)
+        {
+            var seller = await _unitOfWork.Users.GetById(sellerId) ??
+                throw new InvalidDataException("Seller does not exists.");
+
+            seller.VerificationStatus = VerificationStatus.Finished;
+            await _unitOfWork.SaveChangesAsync();
+
+            await SendMail(seller.Email, "Registration rejected", $"Hello {seller.FirstName}." +
+                $" Administrator has rejected your registration request.");
         }
 
         #region pomocne funkcije
@@ -209,7 +245,7 @@ namespace Backend.Services
 
         public static async Task<string> SaveImage(IFormFile imageFile, string targetFolderPath, long id)
         {
-            string fileName = id.ToString() + Path.GetExtension(imageFile.FileName);
+            string fileName = "user" + id.ToString() + Path.GetExtension(imageFile.FileName);
 
             string filePath = Path.Combine(targetFolderPath, fileName);
 
@@ -220,6 +256,7 @@ namespace Backend.Services
 
             return filePath;
         }
+
 
         #endregion
     }
