@@ -4,6 +4,8 @@ using Backend.Interfaces;
 using Backend.Models;
 using Backend.Repositories;
 using Backend.Repositories.Abstractions;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,10 +18,12 @@ namespace Backend.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public ArticleService(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public ArticleService(IUnitOfWork unitOfWork, IMapper mapper, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public async Task<List<ArticleDto>> GetAllArticles()
@@ -64,6 +68,21 @@ namespace Backend.Services
 
                         await _unitOfWork.Articles.Create(article);
                         await _unitOfWork.SaveChangesAsync();
+
+                        if (newArticle.Image != null && newArticle.Image.Length > 0)
+                        {
+                            string imagePath = await SaveImage(newArticle.Image,
+                                Path.Combine(_webHostEnvironment.WebRootPath, "Images"));
+
+                            article.Image = imagePath;
+                        }
+                        else
+                        {
+                            string defaultImagePath = Path.Combine("Images", "default-article.png");
+                            article.Image = defaultImagePath;
+                        }
+
+                        await _unitOfWork.SaveChangesAsync();
                         return _mapper.Map<ArticleDto>(article);
                     }
                     else
@@ -78,7 +97,7 @@ namespace Backend.Services
             }
         }
 
-        public async Task<ArticleDto> UpdateArticle(ArticleDto article)
+        public async Task<ArticleDto> UpdateArticle(UpdateArticleDto article)
         {
             var updatingArticle = await _unitOfWork.Articles.GetById(article.Id);
             if (updatingArticle == null)
@@ -92,10 +111,21 @@ namespace Backend.Services
                 {
                     if (amount > 0 && price > 0)
                     {
+                        if (article.Image != null && article.Image.Length > 0)
+                        {
+                            string imagePath = await SaveImage(article.Image,
+                                Path.Combine(_webHostEnvironment.WebRootPath, "Images"));
+
+                            updatingArticle.Image = imagePath;
+                        }
+
                         updatingArticle.Name = article.Name;
                         updatingArticle.Price = price;
                         updatingArticle.Amount = amount;
                         updatingArticle.Description = article.Description;
+
+                        await _unitOfWork.SaveChangesAsync();
+                        return _mapper.Map<ArticleDto>(updatingArticle);
                     }
                     else
                     {
@@ -107,9 +137,6 @@ namespace Backend.Services
                     throw new InvalidDataException("Amount and price must be numbers.");
                 }
 
-                await _unitOfWork.SaveChangesAsync();
-
-                return _mapper.Map<ArticleDto>(updatingArticle);
             }
         }
         public async Task DeleteArticle(long articleId, long sellerId)
@@ -119,6 +146,23 @@ namespace Backend.Services
             _unitOfWork.Articles.Delete(article);
             await _unitOfWork.SaveChangesAsync();
         }
+
+        #region pomocne funkcije
+        public static async Task<string> SaveImage(IFormFile imageFile, string targetFolderPath)
+        {
+            string fileName = "article" + Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
+
+            string filePath = Path.Combine(targetFolderPath, fileName);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(fileStream);
+            }
+
+            return filePath;
+        }
+
+        #endregion
 
     }
 }

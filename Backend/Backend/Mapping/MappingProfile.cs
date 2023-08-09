@@ -17,6 +17,7 @@ namespace Backend.Mapping
             // --- articles ---
             CreateMap<Article, ArticleDto>().ReverseMap();
             CreateMap<Article, AddArticleDto>().ReverseMap();
+            CreateMap<Article, UpdateArticleDto>().ReverseMap();
         }
     }
 }

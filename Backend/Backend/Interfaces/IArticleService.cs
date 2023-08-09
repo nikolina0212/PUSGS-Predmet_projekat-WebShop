@@ -10,7 +10,7 @@ namespace Backend.Interfaces
         Task<ArticleDto> GetArticle(long articleId);
         Task<List<ArticleDto>> GetSellerArticles(long sellerId);
         Task<ArticleDto> AddArticle(long sellerId, AddArticleDto newArticle);
-        Task<ArticleDto> UpdateArticle(ArticleDto article);
+        Task<ArticleDto> UpdateArticle(UpdateArticleDto article);
         Task DeleteArticle(long articleId, long sellerId);
 
     }

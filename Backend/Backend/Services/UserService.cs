@@ -69,7 +69,7 @@ namespace Backend.Services
                     if (signupUser.Image != null && signupUser.Image.Length > 0)
                     {
                         string imagePath = await SaveImage(signupUser.Image,
-                            Path.Combine(_webHostEnvironment.WebRootPath, "Images"), user.Id);
+                            Path.Combine(_webHostEnvironment.WebRootPath, "Images"));
 
                         user.Image = imagePath;
                     }
@@ -131,6 +131,14 @@ namespace Backend.Services
             }
             else
             {
+                if (newProfile.Image != null && newProfile.Image.Length > 0)
+                {
+                    string imagePath = await SaveImage(newProfile.Image, 
+                        Path.Combine(_webHostEnvironment.WebRootPath, "Images"));
+
+                    user.Image = imagePath;
+                }
+
                 user.Username = newProfile.Username;
                 user.FirstName = newProfile.FirstName;
                 user.LastName = newProfile.LastName;
@@ -243,9 +251,9 @@ namespace Backend.Services
             await smtp.DisconnectAsync(true);
         }
 
-        public static async Task<string> SaveImage(IFormFile imageFile, string targetFolderPath, long id)
+        public static async Task<string> SaveImage(IFormFile imageFile, string targetFolderPath)
         {
-            string fileName = "user" + id.ToString() + Path.GetExtension(imageFile.FileName);
+            string fileName = "user" + Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
 
             string filePath = Path.Combine(targetFolderPath, fileName);
 

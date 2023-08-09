@@ -95,7 +95,7 @@ namespace Backend.Controllers
 
         [HttpPut]
         [Authorize(Roles = "Seller")]
-        public async Task<IActionResult> UpdateArticle([FromForm] ArticleDto articleDto)
+        public async Task<IActionResult> UpdateArticle([FromForm] UpdateArticleDto articleDto)
         {
             try
             {
