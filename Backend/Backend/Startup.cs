@@ -90,6 +90,9 @@ namespace Backend
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IArticleService, ArticleService>();
+            services.AddScoped<IOrderArticleService, OrderArticleService>();
+            services.AddScoped<IOrderService, OrderService>();
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             var mapperConfig = new MapperConfiguration(mc =>
