@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System;
 using System.IO;
 using Backend.DTO;
+using Backend.Shared;
 
 namespace Backend.Controllers
 {
@@ -75,6 +76,104 @@ namespace Backend.Controllers
             catch (InvalidOperationException ex)
             {
                 return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("purhcaser-orders")]
+        [Authorize(Roles = "Purchaser")]
+        public async Task<IActionResult> PurchaserOrders()
+        {
+            long purchaserId = long.Parse(User.GetUserId());
+            try
+            {
+                return Ok(await _orderService.PurchaserOrders(purchaserId));
+
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> GetAllOrders()
+        {
+            try
+            {
+                return Ok(await _orderService.AllOrders());
+
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("seller-orders")]
+        [Authorize(Roles = "Seller")]
+        public async Task<IActionResult> GetSellerOrders([FromQuery] bool isNew)
+        {
+            long sellerId = long.Parse(User.GetUserId());
+            try
+            {
+                return Ok(await _orderService.SellerOrders(sellerId, isNew));
+
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("{orderId}/details")]
+        [Authorize(Roles = "Purchaser, Administrator")]
+        public async Task<IActionResult> GetOrderDetails([FromRoute] long orderId)
+        {
+            try
+            {
+                return Ok(await _orderService.OrderDetails(orderId));
+
+            }
+            catch (InvalidDataException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("{orderId}/seller-details/")]
+        [Authorize(Roles = "Seller")]
+        public async Task<IActionResult> GetSellerOrderDetails([FromRoute] long orderId)
+        {
+            long sellerId = long.Parse(User.GetUserId());
+            try
+            {
+                return Ok(await _orderService.SellerOrderDetails(orderId, sellerId));
+
+            }
+            catch (InvalidDataException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
