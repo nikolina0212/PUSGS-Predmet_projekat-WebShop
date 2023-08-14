@@ -92,3 +92,9 @@ C:\Users\Dajana\OneDrive\Desktop\WEB\pusgs-projekat\Backend\Backend\bin\Debug\ne
 C:\Users\Dajana\OneDrive\Desktop\WEB\pusgs-projekat\Backend\Backend\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Security.Cryptography.Pkcs.dll
 C:\Users\Dajana\OneDrive\Desktop\WEB\pusgs-projekat\Backend\Backend\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Text.Encoding.CodePages.dll
 C:\Users\Dajana\OneDrive\Desktop\WEB\pusgs-projekat\Backend\Backend\bin\Debug\net6.0\Backend.staticwebassets.runtime.json
+C:\Users\Dajana\OneDrive\Desktop\WEB\pusgs-projekat\Backend\Backend\bin\Debug\net6.0\Google.Apis.dll
+C:\Users\Dajana\OneDrive\Desktop\WEB\pusgs-projekat\Backend\Backend\bin\Debug\net6.0\Google.Apis.Auth.PlatformServices.dll
+C:\Users\Dajana\OneDrive\Desktop\WEB\pusgs-projekat\Backend\Backend\bin\Debug\net6.0\Google.Apis.Auth.dll
+C:\Users\Dajana\OneDrive\Desktop\WEB\pusgs-projekat\Backend\Backend\bin\Debug\net6.0\Google.Apis.Core.dll
+C:\Users\Dajana\OneDrive\Desktop\WEB\pusgs-projekat\Backend\Backend\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.Google.dll
+C:\Users\Dajana\OneDrive\Desktop\WEB\pusgs-projekat\Backend\Backend\bin\Debug\net6.0\Newtonsoft.Json.dll

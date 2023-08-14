@@ -17,3 +17,12 @@ export const SignUpUser = async (userData) => {
     throw new Error(error.response.data);
   }
 };
+
+export const SignInWithGoogle = async (googleToken) => {
+  try {
+    const response = await axios.post(`${process.env.REACT_APP_API_URL}/users/google`, googleToken);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data);
+  }
+};

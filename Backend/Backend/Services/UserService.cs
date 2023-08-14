@@ -18,10 +18,13 @@ using MailKit.Security;
 using MimeKit.Text;
 using MimeKit;
 using MailKit.Net.Smtp;
-using static Org.BouncyCastle.Asn1.Cmp.Challenge;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using System.Linq;
+using Google.Apis.Auth;
+using Google.Apis.Auth.OAuth2;
+using static Org.BouncyCastle.Math.EC.ECCurve;
+using System.Net.Http;
 
 namespace Backend.Services
 {
@@ -32,6 +35,7 @@ namespace Backend.Services
         private readonly IConfigurationSection _secretKey;
         private readonly IConfigurationSection _emailConfig;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IConfigurationSection _googleClientId;
         public UserService(IMapper mapper, IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
             _mapper = mapper;
@@ -39,6 +43,7 @@ namespace Backend.Services
             _secretKey = configuration.GetSection("SecretKey");
             _emailConfig = configuration.GetSection("EmailConfig");
             _webHostEnvironment = webHostEnvironment;
+            _googleClientId = configuration.GetSection("GoogleClientID");
         }
 
         public async Task<TokenDto> SignUpUser(UserSignUpDto signupUser)
@@ -63,9 +68,6 @@ namespace Backend.Services
 
                     user.Password = BCrypt.Net.BCrypt.HashPassword(signupUser.Password);
 
-                    await _unitOfWork.Users.Create(user);
-                    await _unitOfWork.SaveChangesAsync();
-
                     if (signupUser.Image != null && signupUser.Image.Length > 0)
                     {
                         string imagePath = await SaveImage(signupUser.Image,
@@ -79,6 +81,7 @@ namespace Backend.Services
                         user.Image = defaultImagePath;
                     }
 
+                    await _unitOfWork.Users.Create(user);
                     await _unitOfWork.SaveChangesAsync();
                     return new TokenDto { Token = CreateToken(user.Id, user.UserType, user.Verified) };
                 }
@@ -124,30 +127,24 @@ namespace Backend.Services
 
         public async Task<UserProfileInfoDto> UpdateProfile(long userId, UpdateProfileDto newProfile)
         {
-            User user = await _unitOfWork.Users.GetById(userId);
-            if (user == null)
-            {
+            User user = await _unitOfWork.Users.GetById(userId) ??
                 throw new InvalidDataException("Error - User does not exists.");
-            }
-            else
+            if (newProfile.Image != null && newProfile.Image.Length > 0)
             {
-                if (newProfile.Image != null && newProfile.Image.Length > 0)
-                {
                     string imagePath = await SaveImage(newProfile.Image, 
                         Path.Combine(_webHostEnvironment.WebRootPath, "Images"));
 
                     user.Image = imagePath;
-                }
-
-                user.Username = newProfile.Username;
-                user.FirstName = newProfile.FirstName;
-                user.LastName = newProfile.LastName;
-                user.Address = newProfile.Address;
-                user.DateOfBirth = newProfile.DateOfBirth;
-
-                await _unitOfWork.SaveChangesAsync();
-                return _mapper.Map<UserProfileInfoDto>(user);
             }
+
+            user.Username = newProfile.Username;
+            user.FirstName = newProfile.FirstName;
+            user.LastName = newProfile.LastName;
+            user.Address = newProfile.Address;
+            user.DateOfBirth = newProfile.DateOfBirth;
+
+            await _unitOfWork.SaveChangesAsync();
+            return _mapper.Map<UserProfileInfoDto>(user);
         }
 
         public async Task ChangePassword(long id, PasswordDto newPassword)
@@ -193,6 +190,54 @@ namespace Backend.Services
             await SendMail(seller.Email, "Registration rejected", $"Hello {seller.FirstName}." +
                 $" Administrator has rejected your registration request.");
         }
+
+        public async Task<TokenDto> SignInWithGoogle(GoogleDto googleDto)
+        {
+            var payload = await GoogleJsonWebSignature.ValidateAsync(googleDto.GoogleToken);
+            if (payload.Audience.ToString() != _googleClientId.Value)
+            {
+                throw new InvalidJwtException("Error - Invalid google token.");
+            }
+
+            User user = await _unitOfWork.Users.Select(x => x.Email.Equals(payload.Email));
+
+            if (user == null)
+            {
+                user = new User
+                {
+                    Email = payload.Email,
+                    Username = payload.GivenName + "_" + payload.FamilyName,
+                    FirstName = payload.GivenName,
+                    LastName = payload.FamilyName,
+                    UserType = UserTypes.Purchaser,
+                    DateOfBirth = new DateTime(2001, 01, 01),
+                    Verified = true,
+                    VerificationStatus = VerificationStatus.Finished
+                };
+                if (payload.Picture != null)
+                {
+                    string imageUrl = payload.Picture;
+                    string targetFolderPath = Path.Combine("Images", "Users");
+
+                    string result = await SaveGoogleImage(imageUrl, 
+                        Path.Combine(_webHostEnvironment.WebRootPath, "Images"));
+                    user.Image = result;
+                }
+                else
+                {
+                    string defaultImagePath = Path.Combine("Images", "default-user.png");
+                    user.Image = defaultImagePath;
+                }
+
+                await _unitOfWork.Users.Create(user);
+                await _unitOfWork.SaveChangesAsync();
+
+                return new TokenDto { Token = CreateToken(user.Id, user.UserType, user.Verified) };
+            }
+
+            return new TokenDto { Token = CreateToken(user.Id, user.UserType, user.Verified) };
+        }
+
 
         #region pomocne funkcije
 
@@ -263,6 +308,27 @@ namespace Backend.Services
             }
 
             return filePath;
+        }
+
+        public async static Task<string> SaveGoogleImage(string imageUrl, string targetFolderPath)
+        {
+            string fileName = $"{Guid.NewGuid()}.jpg";
+
+            string filePath = Path.Combine(targetFolderPath, fileName);
+
+            using var httpClient = new HttpClient();
+            try
+            {
+                var imageBytes = await httpClient.GetByteArrayAsync(imageUrl);
+
+                await File.WriteAllBytesAsync(filePath, imageBytes);
+
+                return filePath;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error saving profile picture.", ex);
+            }
         }
 
 

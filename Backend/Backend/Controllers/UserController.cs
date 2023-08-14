@@ -6,6 +6,7 @@ using System;
 using Backend.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Backend.Shared;
+using Google.Apis.Auth;
 
 namespace Backend.Controllers
 {
@@ -163,6 +164,23 @@ namespace Backend.Controllers
             catch (InvalidDataException ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost("google")]
+        public async Task<IActionResult> GoogleSignIn([FromBody] GoogleDto googleDto)
+        {
+            try
+            {
+                return Ok(await _userService.SignInWithGoogle(googleDto));
+            }
+            catch (InvalidJwtException jwtEx)
+            {
+                return Unauthorized(jwtEx.Message);
             }
             catch (Exception)
             {
