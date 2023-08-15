@@ -16,10 +16,11 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearUser } from '../../redux/userSlice';
+import { Link } from 'react-router-dom';
 
 const drawerWidth = 240;
 
-export default function Dashboard() {
+export default function Dashboard({ content }) {
   const user = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
 
@@ -70,7 +71,7 @@ export default function Dashboard() {
         <Divider />
         <List>
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton component={Link} to="/profile">
             <ListItemIcon>
               <AccountCircleIcon />
             </ListItemIcon>
@@ -98,6 +99,7 @@ export default function Dashboard() {
         {user.isVerified === 'False' && (
           <h3>You are not verified yet.</h3>
         )}
+        {content}
       </Box>
     </Box>
   );

@@ -71,10 +71,11 @@ namespace Backend.Services
 
                         if (newArticle.Image != null && newArticle.Image.Length > 0)
                         {
-                            string imagePath = await SaveImage(newArticle.Image,
+                            string fileName = "article" + Guid.NewGuid().ToString() + Path.GetExtension(newArticle.Image.FileName);
+                            _ = await SaveImage(fileName, newArticle.Image,
                                 Path.Combine(_webHostEnvironment.WebRootPath, "Images"));
 
-                            article.Image = imagePath;
+                            article.Image = Path.Combine("Images", fileName);
                         }
                         else
                         {
@@ -113,10 +114,11 @@ namespace Backend.Services
                     {
                         if (article.Image != null && article.Image.Length > 0)
                         {
-                            string imagePath = await SaveImage(article.Image,
+                            string fileName = "article" + Guid.NewGuid().ToString() + Path.GetExtension(article.Image.FileName);
+                            _ = await SaveImage(fileName, article.Image,
                                 Path.Combine(_webHostEnvironment.WebRootPath, "Images"));
 
-                            updatingArticle.Image = imagePath;
+                            updatingArticle.Image = Path.Combine("Images", fileName);
                         }
 
                         updatingArticle.Name = article.Name;
@@ -148,10 +150,8 @@ namespace Backend.Services
         }
 
         #region pomocne funkcije
-        public static async Task<string> SaveImage(IFormFile imageFile, string targetFolderPath)
+        public static async Task<string> SaveImage(string fileName, IFormFile imageFile, string targetFolderPath)
         {
-            string fileName = "article" + Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
-
             string filePath = Path.Combine(targetFolderPath, fileName);
 
             using (var fileStream = new FileStream(filePath, FileMode.Create))

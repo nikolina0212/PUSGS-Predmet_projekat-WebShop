@@ -2,6 +2,7 @@ import './App.css';
 import Login from './components/users/Login';
 import SignUp from './components/users/SignUp';
 import Dashboard from './components/shared/Dashboard';
+import Profile from './components/users/Profile';
 import { ThemeProvider } from '@mui/material/styles';
 import darkTheme from './styles/theme';
 import { useDispatch } from 'react-redux';
@@ -42,6 +43,7 @@ function App() {
     <Routes>
           <Route element={<PrivateRoutes/>}>
             <Route path='/' element={<Dashboard/>}/>
+            <Route path="/profile" element={<Profile />} />
           </Route>
 
           <Route element={<Redirect/>}>

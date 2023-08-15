@@ -70,10 +70,11 @@ namespace Backend.Services
 
                     if (signupUser.Image != null && signupUser.Image.Length > 0)
                     {
-                        string imagePath = await SaveImage(signupUser.Image,
+                        string fileName = "user" + Guid.NewGuid().ToString() + Path.GetExtension(signupUser.Image.FileName);
+                        _ = await SaveImage(signupUser.Image, fileName,
                             Path.Combine(_webHostEnvironment.WebRootPath, "Images"));
 
-                        user.Image = imagePath;
+                        user.Image = Path.Combine("Images", fileName);
                     }
                     else
                     {
@@ -131,10 +132,11 @@ namespace Backend.Services
                 throw new InvalidDataException("Error - User does not exists.");
             if (newProfile.Image != null && newProfile.Image.Length > 0)
             {
-                    string imagePath = await SaveImage(newProfile.Image, 
+                string fileName = "user" + Guid.NewGuid().ToString() + Path.GetExtension(newProfile.Image.FileName);
+                _ = await SaveImage(newProfile.Image, fileName,
                         Path.Combine(_webHostEnvironment.WebRootPath, "Images"));
 
-                    user.Image = imagePath;
+                user.Image = Path.Combine("Images", fileName);
             }
 
             user.Username = newProfile.Username;
@@ -210,6 +212,7 @@ namespace Backend.Services
                     FirstName = payload.GivenName,
                     LastName = payload.FamilyName,
                     UserType = UserTypes.Purchaser,
+                    Address = "No address",
                     DateOfBirth = new DateTime(2001, 01, 01),
                     Verified = true,
                     VerificationStatus = VerificationStatus.Finished
@@ -217,11 +220,12 @@ namespace Backend.Services
                 if (payload.Picture != null)
                 {
                     string imageUrl = payload.Picture;
-                    string targetFolderPath = Path.Combine("Images", "Users");
 
-                    string result = await SaveGoogleImage(imageUrl, 
+                    string fileName = $"{Guid.NewGuid()}.jpg";
+                    string result = await SaveGoogleImage(fileName, imageUrl, 
                         Path.Combine(_webHostEnvironment.WebRootPath, "Images"));
-                    user.Image = result;
+
+                    user.Image = Path.Combine("Images", fileName);
                 }
                 else
                 {
@@ -296,10 +300,8 @@ namespace Backend.Services
             await smtp.DisconnectAsync(true);
         }
 
-        public static async Task<string> SaveImage(IFormFile imageFile, string targetFolderPath)
+        public static async Task<string> SaveImage(IFormFile imageFile, string fileName, string targetFolderPath)
         {
-            string fileName = "user" + Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
-
             string filePath = Path.Combine(targetFolderPath, fileName);
 
             using (var fileStream = new FileStream(filePath, FileMode.Create))
@@ -310,10 +312,8 @@ namespace Backend.Services
             return filePath;
         }
 
-        public async static Task<string> SaveGoogleImage(string imageUrl, string targetFolderPath)
+        public async static Task<string> SaveGoogleImage(string fileName, string imageUrl, string targetFolderPath)
         {
-            string fileName = $"{Guid.NewGuid()}.jpg";
-
             string filePath = Path.Combine(targetFolderPath, fileName);
 
             using var httpClient = new HttpClient();
@@ -330,7 +330,6 @@ namespace Backend.Services
                 throw new Exception("Error saving profile picture.", ex);
             }
         }
-
 
         #endregion
     }
