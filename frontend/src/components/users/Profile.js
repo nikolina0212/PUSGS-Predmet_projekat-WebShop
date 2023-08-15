@@ -92,6 +92,12 @@ const Profile = () => {
   };
  
   function validatePasswords(newPass, confirmPass) {
+    if(newPass.trim() === '' || confirmPass.trim() === ''){
+      setErrorPass("Please fill out all required fields.");
+      setConfirmPass('');
+      setNewPass('');
+      return false;
+    }
     if(newPass !== confirmPass){
       setErrorPass("Passwords doesn't match. Try again.");
       setConfirmPass('');

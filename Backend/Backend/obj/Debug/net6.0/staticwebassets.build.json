@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "OzxDJvZeCLXvzrXj+JFZws9NfhCqPzRWSrNgpvVq0B0=",
+  "Hash": "Jm+E00+vdfLu6XE15JhKZHNd0JHr3+Vf+qAUqrDsJRQ=",
   "Source": "Backend",
   "BasePath": "_content/Backend",
   "Mode": "Default",
@@ -49,6 +49,40 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\Images\\default-user.png"
+    },
+    {
+      "Identity": "C:\\Users\\Dajana\\OneDrive\\Desktop\\WEB\\pusgs-projekat\\Backend\\Backend\\wwwroot\\Images\\fb3c9c51-9e6e-4b4e-87b2-c055342f5264.jpg",
+      "SourceId": "Backend",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Dajana\\OneDrive\\Desktop\\WEB\\pusgs-projekat\\Backend\\Backend\\wwwroot\\",
+      "BasePath": "_content/Backend",
+      "RelativePath": "Images/fb3c9c51-9e6e-4b4e-87b2-c055342f5264.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Images\\fb3c9c51-9e6e-4b4e-87b2-c055342f5264.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\Dajana\\OneDrive\\Desktop\\WEB\\pusgs-projekat\\Backend\\Backend\\wwwroot\\Images\\userf8d67e58-e16c-4afe-8425-c75c58284bb4.png",
+      "SourceId": "Backend",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Dajana\\OneDrive\\Desktop\\WEB\\pusgs-projekat\\Backend\\Backend\\wwwroot\\",
+      "BasePath": "_content/Backend",
+      "RelativePath": "Images/userf8d67e58-e16c-4afe-8425-c75c58284bb4.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Images\\userf8d67e58-e16c-4afe-8425-c75c58284bb4.png"
     }
   ]
 }

@@ -17,6 +17,7 @@ import LocalMallIcon from '@mui/icons-material/LocalMall';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearUser } from '../../redux/userSlice';
 import { Link } from 'react-router-dom';
+import VerifiedIcon from '@mui/icons-material/Verified';
 
 const drawerWidth = 240;
 
@@ -78,6 +79,26 @@ export default function Dashboard({ content }) {
             <ListItemText primary="Profile" />
           </ListItemButton>
         </ListItem>
+        {user.role === 'Administrator' && (
+        <ListItem disablePadding>
+        <ListItemButton component={Link} to="/verification">
+          <ListItemIcon>
+            <VerifiedIcon />
+          </ListItemIcon>
+          <ListItemText primary="User verification" />
+        </ListItemButton>
+        </ListItem>
+        )}
+        {user.role === 'Purchaser' && (
+        <ListItem disablePadding>
+        <ListItemButton component={Link} to="/available-articles">
+          <ListItemIcon>
+            <VerifiedIcon />
+          </ListItemIcon>
+          <ListItemText primary="Available articles" />
+        </ListItemButton>
+        </ListItem>
+        )}
       </List>
         <Divider />
         <List>

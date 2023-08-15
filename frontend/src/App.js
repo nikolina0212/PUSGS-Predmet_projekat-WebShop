@@ -3,17 +3,19 @@ import Login from './components/users/Login';
 import SignUp from './components/users/SignUp';
 import Dashboard from './components/shared/Dashboard';
 import Profile from './components/users/Profile';
+import AllUsers from './components/users/AllUsers';
 import { ThemeProvider } from '@mui/material/styles';
 import darkTheme from './styles/theme';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { isTokenExpired, GetUserVerification } from './redux/UserInfo';
+import { isTokenExpired, GetUserVerification, GetUserRole } from './redux/UserInfo';
 import { setUser, clearUser } from './redux/userSlice';
 import { PrivateRoutes, Redirect } from './redux/PrivateRoutes';
 import { Route, Navigate, Routes } from 'react-router-dom';
+import AllArticles from './components/articles/AllArticles';
 
 function App() {
-
+  const user = useSelector((state) => state.user.user);
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
 
@@ -24,6 +26,7 @@ function App() {
       if (!isExpired) {
         const user = {
           token,
+          role: GetUserRole(token),
           isVerified: GetUserVerification(token),
         };
         dispatch(setUser(user));
@@ -44,6 +47,24 @@ function App() {
           <Route element={<PrivateRoutes/>}>
             <Route path='/' element={<Dashboard/>}/>
             <Route path="/profile" element={<Profile />} />
+            {user.role === 'Administrator' ? (
+              <>
+                <Route path="/verification" element={<AllUsers />} />
+              </>
+            ) : (
+              <>
+                <Route path="/verification" element={<Navigate to="/" />} />
+              </>
+            )}
+            {user.role === 'Purchaser' ? (
+              <>
+                <Route path="/available-articles" element={<AllArticles />} />
+              </>
+            ) : (
+              <>
+                <Route path="/available-articles" element={<Navigate to="/" />} />
+              </>
+            )}
           </Route>
 
           <Route element={<Redirect/>}>

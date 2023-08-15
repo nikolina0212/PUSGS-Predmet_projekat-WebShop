@@ -58,3 +58,31 @@ export const ChangePassword = async (newPass) => {
     throw new Error(error.response.data);
   }
 };
+
+export const GetAllUsers = async () => {
+  try {
+    const response = await apiClient.get(`/users/all`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data);
+  }
+};
+
+export const AcceptUser = async (id) => {
+  try {
+    const response = await apiClient.patch(`/users/${id}/accept`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data);
+  }
+};
+
+
+export const RejectUser = async (id) => {
+  try {
+    const response = await apiClient.patch(`/users/${id}/reject`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data);
+  }
+};

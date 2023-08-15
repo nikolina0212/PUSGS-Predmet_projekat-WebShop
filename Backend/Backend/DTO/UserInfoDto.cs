@@ -9,7 +9,7 @@ namespace Backend.DTO
         public string Username { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string ImageUri { get; set; }
+        public string Image { get; set; }
         public bool Verified { get; set; }
         public VerificationStatus VerificationStatus { get; set; }
         public UserTypes UserType { get; set; }
