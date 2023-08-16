@@ -13,6 +13,8 @@ import { setUser, clearUser } from './redux/userSlice';
 import { PrivateRoutes, Redirect } from './redux/PrivateRoutes';
 import { Route, Navigate, Routes } from 'react-router-dom';
 import AllArticles from './components/articles/AllArticles';
+import MyArticles from './components/articles/MyArticles';
+import AddArticle from './components/articles/AddArticle';
 
 function App() {
   const user = useSelector((state) => state.user.user);
@@ -63,6 +65,17 @@ function App() {
             ) : (
               <>
                 <Route path="/available-articles" element={<Navigate to="/" />} />
+              </>
+            )}
+            {user.role === 'Seller' ? (
+              <>
+                <Route path="/my-articles" element={<MyArticles />} />
+                <Route path="/add-article" element={<AddArticle />} />
+              </>
+            ) : (
+              <>
+                <Route path="/my-articles" element={<Navigate to="/" />} />
+                <Route path="/add-article" element={<Navigate to="/" />} />
               </>
             )}
           </Route>

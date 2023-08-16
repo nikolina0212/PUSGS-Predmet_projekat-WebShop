@@ -22,7 +22,7 @@ namespace Backend.Controllers
 
         [HttpPost("{articleId}/{articleAmount}")]
         [Authorize(Roles = "Purchaser")]
-        public async Task<IActionResult> AddToCart([FromRoute] long articleId, [FromRoute] int articleAmount)
+        public async Task<IActionResult> AddToCart([FromRoute] long articleId, [FromRoute] string articleAmount)
         {
             long purchaserId = long.Parse(User.GetUserId());
             try

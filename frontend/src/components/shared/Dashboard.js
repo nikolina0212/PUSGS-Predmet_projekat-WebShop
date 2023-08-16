@@ -18,6 +18,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { clearUser } from '../../redux/userSlice';
 import { Link } from 'react-router-dom';
 import VerifiedIcon from '@mui/icons-material/Verified';
+import AddCardIcon from '@mui/icons-material/AddCard';
+import ShopIcon from '@mui/icons-material/Shop';
+import AddIcon from '@mui/icons-material/Add';
 
 const drawerWidth = 240;
 
@@ -93,9 +96,29 @@ export default function Dashboard({ content }) {
         <ListItem disablePadding>
         <ListItemButton component={Link} to="/available-articles">
           <ListItemIcon>
-            <VerifiedIcon />
+            <AddCardIcon />
           </ListItemIcon>
           <ListItemText primary="Available articles" />
+        </ListItemButton>
+        </ListItem>
+        )}
+        {user.role === 'Seller' && (
+        <ListItem disablePadding>
+        <ListItemButton component={Link} to="/my-articles">
+          <ListItemIcon>
+            <ShopIcon />
+          </ListItemIcon>
+          <ListItemText primary="My articles" />
+        </ListItemButton>
+        </ListItem>
+        )}
+        {user.role === 'Seller' && (
+        <ListItem disablePadding>
+        <ListItemButton component={Link} to="/add-article">
+          <ListItemIcon>
+            <AddIcon />
+          </ListItemIcon>
+          <ListItemText primary="Add new article" />
         </ListItemButton>
         </ListItem>
         )}

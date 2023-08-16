@@ -23,44 +23,55 @@ namespace Backend.Services
             _mapper = mapper;
         }
 
-        public async Task AddOrderArticle(long purchaserId, long articleId, int articleAmount)
+        public async Task AddOrderArticle(long purchaserId, long articleId, string articleAmount)
         {
             var article = await _unitOfWork.Articles.GetById(articleId);
+            if (int.TryParse(articleAmount, out int amount)){
 
-            if (articleAmount >= 0 && article.Amount == 0)
-            {
-                throw new InvalidOperationException("Error while trying to add item. No enough quantity left.");
-            }
-            if (article.Amount > 0 && articleAmount == 0)
-            {
-                throw new InvalidOperationException("Quantity must be greater then 0.");
-            }
+                if (amount <= 0)
+                {
+                    throw new InvalidOperationException("Quantity must be greater than 0.");
+                }
+                if (amount >= 0 && article.Amount == 0)
+                {
+                    throw new InvalidOperationException("Error while trying to add item. No enough quantity left.");
+                }
+                if (amount > article.Amount)
+                {
+                    throw new InvalidOperationException("You cannot add more amount than its already available.");
+                }
+                
 
-            Order currentOrder = await _unitOfWork.Orders.Select(x => x.OrderStatus.Equals(OrderStatus.InProgress)
-                                                                    && x.PurchaserId == purchaserId);
+                Order currentOrder = await _unitOfWork.Orders.Select(x => x.OrderStatus.Equals(OrderStatus.InProgress)
+                                                                        && x.PurchaserId == purchaserId);
 
-            if (currentOrder == null)
-            {
-                currentOrder = new Order { PurchaserId = purchaserId, OrderStatus = OrderStatus.InProgress};
-                await _unitOfWork.Orders.Create(currentOrder);
+                if (currentOrder == null)
+                {
+                    currentOrder = new Order { PurchaserId = purchaserId, OrderStatus = OrderStatus.InProgress };
+                    await _unitOfWork.Orders.Create(currentOrder);
+                    await _unitOfWork.SaveChangesAsync();
+                }
+
+                var exsistingOrderArticle = await _unitOfWork.OrderArticles.Select(x => x.ArticleId == articleId
+                                                           && x.OrderId == currentOrder.Id);
+                if (exsistingOrderArticle == null)
+                {
+                    await _unitOfWork.OrderArticles.Create
+                        (new OrderArticle { ArticleId = articleId, OrderId = currentOrder.Id, AmountOfArticle = amount });
+                }
+                else
+                {
+                    exsistingOrderArticle.AmountOfArticle += amount;
+                }
+
+                article.Amount -= amount;
+                currentOrder.TotalPrice += (article.Price * amount);
                 await _unitOfWork.SaveChangesAsync();
-            }
-
-            var exsistingOrderArticle = await _unitOfWork.OrderArticles.Select(x => x.ArticleId == articleId 
-                                                       && x.OrderId == currentOrder.Id);
-            if (exsistingOrderArticle == null)
-            {
-                await _unitOfWork.OrderArticles.Create
-                    (new OrderArticle { ArticleId = articleId, OrderId = currentOrder.Id, AmountOfArticle = articleAmount });
             }
             else
             {
-                exsistingOrderArticle.AmountOfArticle += articleAmount;
+                throw new InvalidOperationException("Please enter valid number.");
             }
-
-            article.Amount -= articleAmount;
-            currentOrder.TotalPrice += (article.Price * articleAmount);
-            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task DeleteOrderArticle(long articleId, long orderId)
