@@ -21,6 +21,7 @@ import VerifiedIcon from '@mui/icons-material/Verified';
 import AddCardIcon from '@mui/icons-material/AddCard';
 import ShopIcon from '@mui/icons-material/Shop';
 import AddIcon from '@mui/icons-material/Add';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 const drawerWidth = 240;
 
@@ -99,6 +100,16 @@ export default function Dashboard({ content }) {
             <AddCardIcon />
           </ListItemIcon>
           <ListItemText primary="Available articles" />
+        </ListItemButton>
+        </ListItem>
+        )}
+         {user.role === 'Purchaser' && (
+        <ListItem disablePadding>
+        <ListItemButton component={Link} to="/order">
+          <ListItemIcon>
+            <ShoppingCartIcon />
+          </ListItemIcon>
+          <ListItemText primary="Order view" />
         </ListItemButton>
         </ListItem>
         )}

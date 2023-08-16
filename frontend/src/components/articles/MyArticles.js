@@ -75,7 +75,8 @@ function MyArticles(){
           setSnackbarMessage("Article is successfully edited.");
           setIsSnackbarOpen(true);
       } catch (error) {
-        setErrorFields(error.message);
+        setSnackbarMessage(error.message);
+          setIsSnackbarOpen(true);
       }
   };
 

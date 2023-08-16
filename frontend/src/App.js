@@ -15,6 +15,7 @@ import { Route, Navigate, Routes } from 'react-router-dom';
 import AllArticles from './components/articles/AllArticles';
 import MyArticles from './components/articles/MyArticles';
 import AddArticle from './components/articles/AddArticle';
+import Order from './components/orders/Order';
 
 function App() {
   const user = useSelector((state) => state.user.user);
@@ -61,10 +62,12 @@ function App() {
             {user.role === 'Purchaser' ? (
               <>
                 <Route path="/available-articles" element={<AllArticles />} />
+                <Route path="/order" element={<Order />} />
               </>
             ) : (
               <>
                 <Route path="/available-articles" element={<Navigate to="/" />} />
+                <Route path="/order" element={<Navigate to="/" />} />
               </>
             )}
             {user.role === 'Seller' ? (

@@ -39,6 +39,7 @@ namespace Backend.Repositories
             var order = await _dbContext.Orders
             .Include(o => o.OrderArticles)
                 .ThenInclude(oi => oi.Article)
+                .ThenInclude(i => i.Seller)
             .FirstOrDefaultAsync(o => o.PurchaserId == purchaserId && o.OrderStatus == OrderStatus.InProgress);
 
             return order;

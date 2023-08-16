@@ -10,5 +10,6 @@
         public double ArticlePrice { get; set; }
         public double TotalPrice { get; set; }
         public double Fee { get; set; }
+        public double TotalFee { get; set; }
     }
 }

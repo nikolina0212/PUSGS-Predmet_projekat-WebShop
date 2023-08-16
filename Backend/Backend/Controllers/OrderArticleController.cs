@@ -65,9 +65,10 @@ namespace Backend.Controllers
         [Authorize(Roles = "Purchaser")]
         public async Task<IActionResult> DeleteOrderItem([FromRoute] long articleId, [FromRoute] long orderId)
         {
+            long userId = long.Parse(User.GetUserId());
             try
             {
-                await _orderArticleService.DeleteOrderArticle(articleId, orderId);
+                await _orderArticleService.DeleteOrderArticle(userId, articleId, orderId);
                 return Ok();
             }
             catch (InvalidDataException ex)

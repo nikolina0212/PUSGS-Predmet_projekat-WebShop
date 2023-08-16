@@ -16,5 +16,6 @@ namespace Backend.Models
         public long PurchaserId { get; set; }
         public OrderStatus OrderStatus { get; set; }
         public double TotalPrice { get; set; }
+        public double TotalFee { get; set; }
     }
 }

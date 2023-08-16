@@ -25,7 +25,7 @@ namespace Backend.Services
 
         public async Task AddOrderArticle(long purchaserId, long articleId, string articleAmount)
         {
-            var article = await _unitOfWork.Articles.GetById(articleId);
+            var article = await _unitOfWork.Articles.FindArticle(articleId);
             if (int.TryParse(articleAmount, out int amount)){
 
                 if (amount <= 0)
@@ -54,6 +54,9 @@ namespace Backend.Services
 
                 var exsistingOrderArticle = await _unitOfWork.OrderArticles.Select(x => x.ArticleId == articleId
                                                            && x.OrderId == currentOrder.Id);
+
+                var existingSeller = await _unitOfWork.Articles.CheckSellerFee(purchaserId, article.SellerId);
+
                 if (exsistingOrderArticle == null)
                 {
                     await _unitOfWork.OrderArticles.Create
@@ -64,6 +67,11 @@ namespace Backend.Services
                     exsistingOrderArticle.AmountOfArticle += amount;
                 }
 
+                if (!existingSeller)
+                {
+                    currentOrder.TotalFee += article.Seller.SellerFee;
+                    currentOrder.TotalPrice += article.Seller.SellerFee;
+                }
                 article.Amount -= amount;
                 currentOrder.TotalPrice += (article.Price * amount);
                 await _unitOfWork.SaveChangesAsync();
@@ -74,21 +82,31 @@ namespace Backend.Services
             }
         }
 
-        public async Task DeleteOrderArticle(long articleId, long orderId)
+        public async Task DeleteOrderArticle(long purchaserId, long articleId, long orderId)
         {
             var orderArticle = await _unitOfWork.OrderArticles.GetById(orderId, articleId) 
                 ?? throw new InvalidDataException("Error - Order article does not exists.");
 
             var order = await _unitOfWork.Orders.GetById(orderId) ??
                 throw new InvalidDataException("Error - Order does not exists.");
-            
 
-            var article = await _unitOfWork.Articles.GetById(articleId);
+
+            var article = await _unitOfWork.Articles.FindArticle(articleId);
+
             article.Amount += orderArticle.AmountOfArticle;
             order.TotalPrice -= (article.Price * orderArticle.AmountOfArticle);
 
             _unitOfWork.OrderArticles.Delete(orderArticle);
             await _unitOfWork.SaveChangesAsync();
+
+            var existingSeller = await _unitOfWork.Articles.CheckSellerFee(purchaserId, article.SellerId);
+
+            if (!existingSeller)
+            {
+                order.TotalPrice -= article.Seller.SellerFee;
+                order.TotalFee -= article.Seller.SellerFee;
+                await _unitOfWork.SaveChangesAsync();
+            }
 
             var remaining = await _unitOfWork.OrderArticles.SelectAll(x => x.OrderId == orderId);
             if (!remaining.Any())
@@ -115,7 +133,9 @@ namespace Backend.Services
                       OrderId = orderArticle.OrderId,
                       ArticleId = orderArticle.ArticleId,
                       TotalPrice = currentOrder.TotalPrice,
-                      ArticleImage = orderArticle.Article.Image
+                      ArticleImage = orderArticle.Article.Image,
+                      Fee = orderArticle.Article.Seller.SellerFee,
+                      TotalFee = currentOrder.TotalFee
                  });
             }
 

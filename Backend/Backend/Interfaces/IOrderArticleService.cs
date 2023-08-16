@@ -8,6 +8,6 @@ namespace Backend.Interfaces
     {
         Task AddOrderArticle(long purchaserId, long articleId, string articleAmount);
         Task<List<OrderArticleDto>> GetOrderArticles(long purchaserId);
-        Task DeleteOrderArticle(long articleId, long orderId);
+        Task DeleteOrderArticle(long purchaserId, long articleId, long orderId);
     }
 }
