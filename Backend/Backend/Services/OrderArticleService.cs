@@ -55,7 +55,7 @@ namespace Backend.Services
                 var exsistingOrderArticle = await _unitOfWork.OrderArticles.Select(x => x.ArticleId == articleId
                                                            && x.OrderId == currentOrder.Id);
 
-                var existingSeller = await _unitOfWork.Articles.CheckSellerFee(purchaserId, article.SellerId);
+                var existingSeller = await _unitOfWork.Articles.CheckSellerFee(currentOrder.Id, article.SellerId);
 
                 if (exsistingOrderArticle == null)
                 {
@@ -99,7 +99,7 @@ namespace Backend.Services
             _unitOfWork.OrderArticles.Delete(orderArticle);
             await _unitOfWork.SaveChangesAsync();
 
-            var existingSeller = await _unitOfWork.Articles.CheckSellerFee(purchaserId, article.SellerId);
+            var existingSeller = await _unitOfWork.Articles.CheckSellerFee(orderId, article.SellerId);
 
             if (!existingSeller)
             {

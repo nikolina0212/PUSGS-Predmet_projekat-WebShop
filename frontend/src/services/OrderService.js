@@ -18,3 +18,12 @@ export const DeleteOrderArticle = async (articleId, orderId) => {
     throw new Error(error.response.data);
   }
 };
+
+export const PlaceOrder = async (orderId, data) => {
+  try {
+    const response = await apiClient.patch(`/orders/${orderId}/confirm`, data);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data);
+  }
+};

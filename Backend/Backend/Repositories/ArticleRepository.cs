@@ -22,13 +22,13 @@ namespace Backend.Repositories
            return article;
        }
 
-        public async Task<bool> CheckSellerFee(long purchaserId, long sellerId)
+        public async Task<bool> CheckSellerFee(long orderId, long sellerId)
         {
             List<OrderArticle> orderArticles = await _dbContext.OrderArticles
                 .Include(o => o.Order)
              .Include(o => o.Article)
              .ThenInclude(o => o.Seller)
-               .Where(o => o.Order.PurchaserId == purchaserId).ToListAsync();
+               .Where(o => o.Order.Id == orderId).ToListAsync();
 
             foreach(var oa in orderArticles)
             {
