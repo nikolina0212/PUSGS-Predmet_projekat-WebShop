@@ -27,3 +27,30 @@ export const PlaceOrder = async (orderId, data) => {
     throw new Error(error.response.data);
   }
 };
+
+export const GetAllOrders = async () => {
+  try {
+    const response = await apiClient.get(`/orders`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data);
+  }
+};
+
+export const GetOrdersOnMap = async () => {
+  try {
+    const response = await apiClient.get(`/orders/map`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data);
+  }
+};
+
+export const AcceptOrderOnMap = async (orderId) => {
+  try {
+    const response = await apiClient.patch(`/orders/${orderId}/accept`, null);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data);
+  }
+};

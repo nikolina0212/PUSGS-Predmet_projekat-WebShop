@@ -29,7 +29,7 @@ namespace Backend.Repositories
         public async Task<List<Order>> GetAllOrders()
         {
             var orders = await _dbContext.Orders.Where(o => o.OrderStatus.Equals(OrderStatus.Delivering)
-                         || o.OrderStatus.Equals(OrderStatus.Delivered)).
+                         || o.OrderStatus.Equals(OrderStatus.Delivered) || o.OrderStatus.Equals(OrderStatus.Canceled)).
                 Include(o => o.Purchaser).ToListAsync();
             return orders;
         }
@@ -76,6 +76,19 @@ namespace Backend.Repositories
             .FirstOrDefaultAsync(o => o.Id == orderId);
 
             return order;
+        }
+
+        public async Task<List<Order>> GetOrdersOnMap(long sellerId)
+        {
+            var orders = await _dbContext.Orders
+                .Where(o => o.OrderStatus == OrderStatus.Pending)
+                .Include(o => o.OrderArticles)
+                    .ThenInclude(oi => oi.Article)
+                .Include(o => o.Purchaser)
+                .Where(o => o.OrderArticles.Any(oi => oi.Article.SellerId == sellerId))
+                .ToListAsync();
+
+            return orders;
         }
     }
 }

@@ -14,7 +14,7 @@ import { LoginUser, SignInWithGoogle } from '../../services/UserService';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { UserLogin } from '../../models/users/UserLogin';
-import { GetUserVerification, GetUserRole } from '../../redux/UserInfo';
+import { GetUserVerification, GetUserRole, GetUserStatus } from '../../redux/UserInfo';
 import { setUser } from '../../redux/userSlice';
 
 export default function Login() {
@@ -35,7 +35,8 @@ export default function Login() {
     
     try {
       const resp = await LoginUser(user);
-      dispatch(setUser({ token: resp.token, role: GetUserRole(resp.token), isVerified: GetUserVerification(resp.token) }));
+      dispatch(setUser({token: resp.token, role: GetUserRole(resp.token),
+        isVerified: GetUserVerification(resp.token), status: GetUserStatus(resp.token) }));
       navigate('/');
 
     } catch (error) {
@@ -54,7 +55,8 @@ export default function Login() {
     const handleCallbackResponse = async (response) => {
       try {
         const resp = await SignInWithGoogle({'googleToken': response.credential});
-        dispatch(setUser({ token: resp.token, role: GetUserRole(resp.token) }));
+        dispatch(setUser({ token: resp.token, isVerified: GetUserVerification(resp.token),
+           role: GetUserRole(resp.token), status: GetUserRole(resp.token) }));
         navigate('/');
   
       } catch (error) {

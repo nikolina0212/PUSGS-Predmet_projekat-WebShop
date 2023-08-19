@@ -14,7 +14,7 @@ import { MenuItem, Select } from "@mui/material";
 import { SignUpUser } from "../../services/UserService";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/userSlice";
-import { GetUserVerification } from "../../redux/UserInfo";
+import { GetUserRole, GetUserStatus, GetUserVerification } from "../../redux/UserInfo";
 import { UserSignUp } from "../../models/users/UserSignUp";
 import { useNavigate } from "react-router-dom";
 
@@ -57,7 +57,8 @@ function SignUp(){
 
         try {
           const resp = await SignUpUser(formData);
-          dispatch(setUser({token: resp.token, isVerified: GetUserVerification(resp.token) }));
+          dispatch(setUser({token: resp.token, role: GetUserRole(resp.token),
+             isVerified: GetUserVerification(resp.token), status: GetUserStatus(resp.token) }));
           navigate('/');
           
         } catch (error) {

@@ -84,7 +84,7 @@ namespace Backend.Services
 
                     await _unitOfWork.Users.Create(user);
                     await _unitOfWork.SaveChangesAsync();
-                    return new TokenDto { Token = CreateToken(user.Id, user.UserType, user.Verified) };
+                    return new TokenDto { Token = CreateToken(user.Id, user.UserType, user.Verified, user.VerificationStatus) };
                 }
                 else
                 {
@@ -110,7 +110,7 @@ namespace Backend.Services
                     throw new InvalidDataException("Error - Incorrect password.");
                 }
 
-                return new TokenDto { Token = CreateToken(user.Id, user.UserType, user.Verified) };
+                return new TokenDto { Token = CreateToken(user.Id, user.UserType, user.Verified, user.VerificationStatus) };
             }
             else
             {
@@ -236,10 +236,10 @@ namespace Backend.Services
                 await _unitOfWork.Users.Create(user);
                 await _unitOfWork.SaveChangesAsync();
 
-                return new TokenDto { Token = CreateToken(user.Id, user.UserType, user.Verified) };
+                return new TokenDto { Token = CreateToken(user.Id, user.UserType, user.Verified, user.VerificationStatus) };
             }
 
-            return new TokenDto { Token = CreateToken(user.Id, user.UserType, user.Verified) };
+            return new TokenDto { Token = CreateToken(user.Id, user.UserType, user.Verified, user.VerificationStatus) };
         }
 
 
@@ -254,13 +254,14 @@ namespace Backend.Services
             return regex.IsMatch(email);
         }
 
-        public string CreateToken(long id, UserTypes userType, bool verified)
+        public string CreateToken(long id, UserTypes userType, bool verified, VerificationStatus vs)
         {
             List<Claim> claims = new()
             {
                 new Claim(ClaimTypes.Role, userType.ToString()),
                 new Claim("id", id.ToString()),
-                new Claim("verified", verified.ToString())
+                new Claim("verified", verified.ToString()),
+                new Claim("status", vs.ToString())
             };
 
             SymmetricSecurityKey secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey.Value));

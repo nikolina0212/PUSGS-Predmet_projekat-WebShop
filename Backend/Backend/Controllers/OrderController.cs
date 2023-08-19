@@ -21,25 +21,6 @@ namespace Backend.Controllers
             _orderService = orderService;
         }
 
-        [HttpDelete("{orderId}")]
-        [Authorize(Roles = "Purchaser")]
-        public async Task<IActionResult> DeleteOrder([FromRoute] long orderId)
-        {
-            try
-            {
-                await _orderService.DeleteOrder(orderId);
-                return Ok();
-            }
-            catch (InvalidDataException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception)
-            {
-                return BadRequest();
-            }
-        }
-
         [HttpPatch("{orderId}/confirm")]
         [Authorize(Roles = "Purchaser")]
         public async Task<IActionResult> ConfirmOrder([FromRoute] long orderId, [FromBody] ConfirmOrderDto confirmOrderDto)
@@ -169,6 +150,46 @@ namespace Backend.Controllers
             try
             {
                 return Ok(await _orderService.SellerOrderDetails(orderId, sellerId));
+
+            }
+            catch (InvalidDataException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("map")]
+        [Authorize(Roles = "Seller")]
+        public async Task<IActionResult> GetOrdersOnMap()
+        {
+            long sellerId = long.Parse(User.GetUserId());
+            try
+            {
+                return Ok(await _orderService.OrdersOnMap(sellerId));
+
+            }
+            catch (InvalidDataException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPatch("{orderId}/accept")]
+        [Authorize(Roles = "Seller")]
+        public async Task<IActionResult> AcceptOrder([FromRoute] long orderId)
+        {
+            long sellerId = long.Parse(User.GetUserId());
+            try
+            {
+                return Ok(await _orderService.AcceptOrderOnMap(sellerId, orderId));
 
             }
             catch (InvalidDataException ex)

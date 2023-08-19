@@ -10,6 +10,11 @@ export const GetUserVerification = (token) => {
   return decodedToken['verified'];
 };
 
+export const GetUserStatus = (token) => {
+  const decodedToken = jwtDecode(token);
+  return decodedToken['status'];
+};
+
 export const isTokenExpired = (token) => {
   if (!token) {
     return true;

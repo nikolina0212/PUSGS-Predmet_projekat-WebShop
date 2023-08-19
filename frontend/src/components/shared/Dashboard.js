@@ -3,12 +3,14 @@ import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import CssBaseline from '@mui/material/CssBaseline';
 import AppBar from '@mui/material/AppBar';
+import { Alert } from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
+import PublicIcon from '@mui/icons-material/Public';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
@@ -22,6 +24,7 @@ import AddCardIcon from '@mui/icons-material/AddCard';
 import ShopIcon from '@mui/icons-material/Shop';
 import AddIcon from '@mui/icons-material/Add';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import ClearAllIcon from '@mui/icons-material/ClearAll';
 
 const drawerWidth = 240;
 
@@ -93,6 +96,16 @@ export default function Dashboard({ content }) {
         </ListItemButton>
         </ListItem>
         )}
+        {user.role === 'Administrator' && (
+        <ListItem disablePadding>
+        <ListItemButton component={Link} to="/admin-orders">
+          <ListItemIcon>
+            <ClearAllIcon />
+          </ListItemIcon>
+          <ListItemText primary="All orders" />
+        </ListItemButton>
+        </ListItem>
+        )}
         {user.role === 'Purchaser' && (
         <ListItem disablePadding>
         <ListItemButton component={Link} to="/available-articles">
@@ -113,7 +126,7 @@ export default function Dashboard({ content }) {
         </ListItemButton>
         </ListItem>
         )}
-        {user.role === 'Seller' && (
+        {user.role === 'Seller' && user.isVerified === 'True' && (
         <ListItem disablePadding>
         <ListItemButton component={Link} to="/my-articles">
           <ListItemIcon>
@@ -123,13 +136,23 @@ export default function Dashboard({ content }) {
         </ListItemButton>
         </ListItem>
         )}
-        {user.role === 'Seller' && (
+        {user.role === 'Seller' && user.isVerified === 'True' && (
         <ListItem disablePadding>
         <ListItemButton component={Link} to="/add-article">
           <ListItemIcon>
             <AddIcon />
           </ListItemIcon>
           <ListItemText primary="Add new article" />
+        </ListItemButton>
+        </ListItem>
+        )}
+        {user.role === 'Seller' && user.isVerified === 'True' && (
+        <ListItem disablePadding>
+        <ListItemButton component={Link} to="/map">
+          <ListItemIcon>
+            <PublicIcon />
+          </ListItemIcon>
+          <ListItemText primary="Map" />
         </ListItemButton>
         </ListItem>
         )}
@@ -152,7 +175,8 @@ export default function Dashboard({ content }) {
       >
         <Toolbar />
         {user.isVerified === 'False' && (
-          <h3>You are not verified yet.</h3>
+          <Alert severity="error" style={{width: '400px'}}>
+            You are not verified yet.  Verification status: {user.status}</Alert>
         )}
         {content}
       </Box>

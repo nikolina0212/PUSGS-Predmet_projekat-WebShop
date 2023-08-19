@@ -23,6 +23,7 @@ namespace Backend.Mapping
             CreateMap<Article, OrderInfoDto>().ReverseMap();
             CreateMap<Order, OrderListDto>().ReverseMap();
             CreateMap<Order, OrderListExt>().ReverseMap();
+            CreateMap<Order, OrderMapDto>().ReverseMap();
         }
     }
 }

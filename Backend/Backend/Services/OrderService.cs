@@ -31,8 +31,7 @@ namespace Backend.Services
             order.ShippingAddress = confirmOrderDto.ShippingAddress;
             order.Comment = confirmOrderDto.Comment;
             order.OrderPlacementTime = DateTime.Now;
-            order.EstimatedDeliveryDate = GenerateDeliveryTime();
-            order.OrderStatus = OrderStatus.Delivering;
+            order.OrderStatus = OrderStatus.Pending;
 
             await _unitOfWork.SaveChangesAsync();
         }
@@ -50,23 +49,6 @@ namespace Backend.Services
             }
 
             order.OrderStatus = OrderStatus.Canceled;
-            await _unitOfWork.SaveChangesAsync();
-        }
-
-        public async Task DeleteOrder(long orderId)
-        {
-            var order = await _unitOfWork.Orders.OrderToDelete(orderId) ??
-                throw new InvalidDataException("Error - Order does not exists.");
-
-            foreach (var orderArticle in order.OrderArticles)
-            {
-                var item = await _unitOfWork.Articles.GetById(orderArticle.ArticleId) ??
-                    throw new InvalidDataException("Error - Item does not exists.");
-               
-                item.Amount += orderArticle.AmountOfArticle;
-            }
-
-            _unitOfWork.Orders.Delete(order);
             await _unitOfWork.SaveChangesAsync();
         }
 
@@ -181,6 +163,38 @@ namespace Backend.Services
             return orderInfoDtos;
         }
 
+        public async Task<List<OrderMapDto>> OrdersOnMap(long orderId)
+        {
+            var orders = await _unitOfWork.Orders.GetOrdersOnMap(orderId);
+            return orders.Any() ? _mapper.Map<List<OrderMapDto>>(orders) :
+                throw new InvalidDataException("Error - No order.");
+        }
+
+        public async Task<int> AcceptOrderOnMap(long  sellerId, long orderId)
+        {
+            var order = await _unitOfWork.Orders.OrderDetails(orderId) ??
+                throw new InvalidDataException("Error - No existing order.");
+            foreach(var orderArticle in order.OrderArticles)
+            {
+                if(orderArticle.Article.Seller.Id == sellerId)
+                {
+                    orderArticle.Accepted = true;
+                }
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+
+            // provera da li su svi artikli prihvaceni, ako jesu prihvata se i porudzbina
+            if(order.OrderArticles.All(oa => oa.Accepted)){
+                order.OrderStatus = OrderStatus.Delivering;
+                order.EstimatedDeliveryDate = GenerateDeliveryTime();
+                await _unitOfWork.SaveChangesAsync();
+                return 1;
+            }
+
+            return 2;
+        }
+
         #region pomocne funkcije
         public static DateTime GenerateDeliveryTime()
         {
@@ -194,6 +208,7 @@ namespace Backend.Services
 
             return randomTime;
         }
+
 
         #endregion
     }

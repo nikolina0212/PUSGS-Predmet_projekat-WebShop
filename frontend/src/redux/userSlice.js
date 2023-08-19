@@ -4,7 +4,8 @@ const initialState = {
   user: {
     token: localStorage.getItem('token') || null,
     role: null,
-    isVerified: false
+    isVerified: false,
+    status: ''
   },
 };
 
@@ -13,11 +14,12 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
-      const { token, role, isVerified } = action.payload;
+      const { token, role, isVerified, status } = action.payload;
       state.user = {
         token,
         role,
         isVerified,
+        status
       };
       localStorage.setItem('token', token); 
     },
@@ -25,7 +27,8 @@ const userSlice = createSlice({
       state.user = {
         token: null,
         role: null,
-        isVerified: false
+        isVerified: false,
+        status: ''
       };
       localStorage.removeItem('token'); 
     },

@@ -2,13 +2,15 @@ import './App.css';
 import Login from './components/users/Login';
 import SignUp from './components/users/SignUp';
 import Dashboard from './components/shared/Dashboard';
+import Map from './components/orders/Map';
 import Profile from './components/users/Profile';
 import AllUsers from './components/users/AllUsers';
+import AdminOrders from './components/orders/AdminOrders';
 import { ThemeProvider } from '@mui/material/styles';
 import darkTheme from './styles/theme';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { isTokenExpired, GetUserVerification, GetUserRole } from './redux/UserInfo';
+import { isTokenExpired, GetUserVerification, GetUserRole, GetUserStatus } from './redux/UserInfo';
 import { setUser, clearUser } from './redux/userSlice';
 import { PrivateRoutes, Redirect } from './redux/PrivateRoutes';
 import { Route, Navigate, Routes } from 'react-router-dom';
@@ -31,6 +33,7 @@ function App() {
           token,
           role: GetUserRole(token),
           isVerified: GetUserVerification(token),
+          status: GetUserStatus(token)
         };
         dispatch(setUser(user));
       } else {
@@ -53,10 +56,12 @@ function App() {
             {user.role === 'Administrator' ? (
               <>
                 <Route path="/verification" element={<AllUsers />} />
+                <Route path="/admin-orders" element={<AdminOrders />} />
               </>
             ) : (
               <>
                 <Route path="/verification" element={<Navigate to="/" />} />
+                <Route path="/admin-orders" element={<Navigate to="/" />} />
               </>
             )}
             {user.role === 'Purchaser' ? (
@@ -74,11 +79,13 @@ function App() {
               <>
                 <Route path="/my-articles" element={<MyArticles />} />
                 <Route path="/add-article" element={<AddArticle />} />
+                <Route path="/map" element={<Map />} />
               </>
             ) : (
               <>
                 <Route path="/my-articles" element={<Navigate to="/" />} />
                 <Route path="/add-article" element={<Navigate to="/" />} />
+                <Route path="/map" element={<Navigate to="/" />} />
               </>
             )}
           </Route>

@@ -12,5 +12,6 @@ namespace Backend.Repositories.Abstractions
         Task<List<Order>> GetSellerOrders(long sellerId);
         Task<Order> OrderDetails(long orderId);
         Task<List<Order>> GetAllOrders();
+        Task<List<Order>> GetOrdersOnMap(long sellerId);
     }
 }

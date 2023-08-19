@@ -7,5 +7,6 @@
         public Article Article{ get; set; }
         public long ArticleId { get; set; }
         public int AmountOfArticle { get; set; }
+        public bool Accepted { get; set; }
     }
 }
