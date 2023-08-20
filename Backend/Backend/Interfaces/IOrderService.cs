@@ -15,5 +15,7 @@ namespace Backend.Interfaces
         Task<List<OrderInfoDto>> SellerOrderDetails(long orderId, long sellerId);
         Task<List<OrderMapDto>> OrdersOnMap(long orderId);
         Task<int> AcceptOrderOnMap(long sellerId, long orderId);
+        Task<List<OrderMapDto>> PendingOrders(long purchaserId);
+
     }
 }

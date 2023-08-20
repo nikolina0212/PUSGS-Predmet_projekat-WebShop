@@ -16,33 +16,37 @@ function Map() {
 
   useEffect(() => {
     const geocodeAddresses = async () => {
-      const orders = await GetOrdersOnMap();
-      orders.forEach(async (order) => {
-        try {
-          const response = await axios.get(
-            "https://maps.googleapis.com/maps/api/geocode/json",
-            {
-              params: {
-                address: order.shippingAddress,
-                key: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
-              },
+      try{
+        const orders = await GetOrdersOnMap();
+        orders.forEach(async (order) => {
+          try {
+            const response = await axios.get(
+              "https://maps.googleapis.com/maps/api/geocode/json",
+              {
+                params: {
+                  address: order.shippingAddress,
+                  key: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+                },
+              }
+            );
+  
+            const { results } = response.data;
+            if (results.length > 0) {
+              const { lat, lng } = results[0].geometry.location;
+              setMarkers((prevMarkers) => [
+                ...prevMarkers,
+                { lat, lng, orderDetails: order },
+              ]);
             }
-          );
-
-          const { results } = response.data;
-          if (results.length > 0) {
-            const { lat, lng } = results[0].geometry.location;
-            setMarkers((prevMarkers) => [
-              ...prevMarkers,
-              { lat, lng, orderDetails: order },
-            ]);
+          } catch (error) {
+            console.log(error);
           }
-        } catch (error) {
-          console.log(error);
-        }
-      });
-    };
-
+        });
+      }catch(error){
+        console.log(error.message);
+      }
+    }
+    
     geocodeAddresses();
   }, []);
 
@@ -109,9 +113,9 @@ function Map() {
           </MapContainer>
           <Snackbar
         open={snackbarOpen}
-        autoHideDuration={4000}
+        autoHideDuration={6000}
         onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: 'center', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
         <Alert severity="info">{snackbarMessage}</Alert>
       </Snackbar>

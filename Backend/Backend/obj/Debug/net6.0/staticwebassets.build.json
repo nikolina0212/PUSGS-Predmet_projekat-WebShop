@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "zXFO5Wqtn6yI4pVmhHog0Nn22Phlb/IxI9wq5KOCM3s=",
+  "Hash": "OzxDJvZeCLXvzrXj+JFZws9NfhCqPzRWSrNgpvVq0B0=",
   "Source": "Backend",
   "BasePath": "_content/Backend",
   "Mode": "Default",
@@ -49,23 +49,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\Images\\default-user.png"
-    },
-    {
-      "Identity": "C:\\Users\\Dajana\\OneDrive\\Desktop\\WEB\\pusgs-projekat\\Backend\\Backend\\wwwroot\\Images\\user067b138c-7120-485f-95ec-d66225e78a7b.png",
-      "SourceId": "Backend",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Dajana\\OneDrive\\Desktop\\WEB\\pusgs-projekat\\Backend\\Backend\\wwwroot\\",
-      "BasePath": "_content/Backend",
-      "RelativePath": "Images/user067b138c-7120-485f-95ec-d66225e78a7b.png",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\Images\\user067b138c-7120-485f-95ec-d66225e78a7b.png"
     }
   ]
 }

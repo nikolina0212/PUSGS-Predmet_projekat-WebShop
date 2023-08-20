@@ -4,9 +4,13 @@ import SignUp from './components/users/SignUp';
 import Dashboard from './components/shared/Dashboard';
 import Map from './components/orders/Map';
 import Profile from './components/users/Profile';
+import Delivered from './components/orders/Delivered';
+import NewOrders from './components/orders/NewOrders';
 import AllUsers from './components/users/AllUsers';
 import AdminOrders from './components/orders/AdminOrders';
 import { ThemeProvider } from '@mui/material/styles';
+import History from './components/orders/History';
+import Pending from './components/orders/Pending';
 import darkTheme from './styles/theme';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
@@ -68,11 +72,15 @@ function App() {
               <>
                 <Route path="/available-articles" element={<AllArticles />} />
                 <Route path="/order" element={<Order />} />
+                <Route path="/history" element={<History />} />
+                <Route path="/pending" element={<Pending />} />
               </>
             ) : (
               <>
                 <Route path="/available-articles" element={<Navigate to="/" />} />
                 <Route path="/order" element={<Navigate to="/" />} />
+                <Route path="/history" element={<Navigate to="/" />} />
+                <Route path="/pending" element={<Navigate to="/" />} />
               </>
             )}
             {user.role === 'Seller' ? (
@@ -80,12 +88,16 @@ function App() {
                 <Route path="/my-articles" element={<MyArticles />} />
                 <Route path="/add-article" element={<AddArticle />} />
                 <Route path="/map" element={<Map />} />
+                <Route path="/delivered" element={<Delivered />} />
+                <Route path="/new" element={<NewOrders />} />
               </>
             ) : (
               <>
                 <Route path="/my-articles" element={<Navigate to="/" />} />
                 <Route path="/add-article" element={<Navigate to="/" />} />
                 <Route path="/map" element={<Navigate to="/" />} />
+                <Route path="/delivered" element={<Navigate to="/" />} />
+                <Route path="/new" element={<Navigate to="/" />} />
               </>
             )}
           </Route>

@@ -195,6 +195,15 @@ namespace Backend.Services
             return 2;
         }
 
+        public async Task<List<OrderMapDto>> PendingOrders(long purchaserId)
+        {
+            var orders = await _unitOfWork.Orders.SelectAll(x => x.PurchaserId == purchaserId &&
+                    x.OrderStatus.Equals(OrderStatus.Pending));
+
+            return orders.Any() ? _mapper.Map<List<OrderMapDto>>(orders) :
+                throw new InvalidOperationException("Error - No order.");
+        }
+
         #region pomocne funkcije
         public static DateTime GenerateDeliveryTime()
         {
@@ -208,7 +217,6 @@ namespace Backend.Services
 
             return randomTime;
         }
-
 
         #endregion
     }

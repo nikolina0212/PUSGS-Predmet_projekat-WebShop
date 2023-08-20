@@ -201,5 +201,25 @@ namespace Backend.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("pending")]
+        [Authorize(Roles = "Purchaser")]
+        public async Task<IActionResult> GetPendingOrders()
+        {
+            long purchaserId = long.Parse(User.GetUserId());
+            try
+            {
+                return Ok(await _orderService.PendingOrders(purchaserId));
+
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

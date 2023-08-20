@@ -4,10 +4,10 @@ import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
+import Details from './Details';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableFooter from '@mui/material/TableFooter';
-//import Tooltip from '@mui/material/Tooltip';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
@@ -16,10 +16,12 @@ import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
-import { TableHead } from '@mui/material';
+import { TableHead, Alert } from '@mui/material';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import Dashboard from '../shared/Dashboard';
 import { useEffect, useState } from 'react';
-import { GetAllOrders } from '../../services/OrderService';
+import { GetAllOrders, GetOrderDetails } from '../../services/OrderService';
+import { OrderDetails } from '../../models/orders/OrderDetails';
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -88,6 +90,8 @@ function AdminOrders(){
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [error, setErrorMessage] = useState('');
+  const [openDialog, setOpenDialog] = useState(false);
+  const [orderArticles, setOrderArticles] = useState(new OrderDetails());
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - orders.length) : 0;
@@ -117,14 +121,28 @@ function AdminOrders(){
     getAllOrders();
   }, []);
 
+  const handleOpenDialog = async (orderId) => {
+    try {
+      const resp = await GetOrderDetails(orderId);
+      setOrderArticles(resp);
+    } catch (error) {
+      setErrorMessage(error.message);
+    }
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
   const getStatus = (status) => {
-    if( status === 1){
+    if( status === 2){
       return 'DELIVERING';
     }
-    if(status === 2){
+    if(status === 3){
       return 'DELIVERED';
     }
-    if(status === 3){
+    if(status === 4){
       return 'CANCELED'
     }
   };
@@ -134,7 +152,7 @@ function AdminOrders(){
       <>
       
       {orders === null && !error && (<h1>Loading...</h1>)}
-      {error && (<h3>{error}</h3>)}
+      {error && (<Alert severity="error" style={{width: '400px'}}>{error}</Alert>)}
       {orders && (
         <TableContainer component={Paper}>
         <Table sx={{ minWidth: 700 }} aria-label="custom pagination table">
@@ -148,6 +166,7 @@ function AdminOrders(){
               <TableCell align='right'><b>Shipping address</b></TableCell>
               <TableCell align='right'><b>Price (USD)</b></TableCell>
               <TableCell align='right'><b>Order status</b></TableCell>
+              <TableCell></TableCell>
             </TableRow>
             </TableHead>
           <TableBody>
@@ -186,6 +205,14 @@ function AdminOrders(){
                 <TableCell  align="right">
                   {getStatus(order.orderStatus)}
                 </TableCell>
+                <TableCell align="right">
+                <div>
+                        <IconButton onClick={() => handleOpenDialog(order.id)}>
+                          <FormatListBulletedIcon/>
+                        </IconButton>
+                    </div>
+                </TableCell>
+                <TableCell></TableCell>
               </TableRow>
             ))}
             {emptyRows > 0 && (
@@ -217,6 +244,11 @@ function AdminOrders(){
         </Table>
       </TableContainer>
       )}
+      <Details
+        open={openDialog}
+        handleClose={handleCloseDialog}
+        orderArticles={orderArticles}
+      />
       </>
     }/>
   );

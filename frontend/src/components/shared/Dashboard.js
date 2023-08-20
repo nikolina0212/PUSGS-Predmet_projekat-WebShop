@@ -6,9 +6,13 @@ import AppBar from '@mui/material/AppBar';
 import { Alert } from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
+import FiberNewIcon from '@mui/icons-material/FiberNew';
 import ListItem from '@mui/material/ListItem';
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import ListItemButton from '@mui/material/ListItemButton';
 import PublicIcon from '@mui/icons-material/Public';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -126,6 +130,26 @@ export default function Dashboard({ content }) {
         </ListItemButton>
         </ListItem>
         )}
+          {user.role === 'Purchaser' && (
+        <ListItem disablePadding>
+        <ListItemButton component={Link} to="/pending">
+          <ListItemIcon>
+            <QuestionMarkIcon />
+          </ListItemIcon>
+          <ListItemText primary="Pending orders" />
+        </ListItemButton>
+        </ListItem>
+        )}
+         {user.role === 'Purchaser' && (
+        <ListItem disablePadding>
+        <ListItemButton component={Link} to="/history">
+          <ListItemIcon>
+            <MoreHorizIcon />
+          </ListItemIcon>
+          <ListItemText primary="Orders history" />
+        </ListItemButton>
+        </ListItem>
+        )}
         {user.role === 'Seller' && user.isVerified === 'True' && (
         <ListItem disablePadding>
         <ListItemButton component={Link} to="/my-articles">
@@ -143,6 +167,26 @@ export default function Dashboard({ content }) {
             <AddIcon />
           </ListItemIcon>
           <ListItemText primary="Add new article" />
+        </ListItemButton>
+        </ListItem>
+        )}
+        {user.role === 'Seller' && user.isVerified === 'True' && (
+        <ListItem disablePadding>
+        <ListItemButton component={Link} to="/new">
+          <ListItemIcon>
+            <FiberNewIcon />
+          </ListItemIcon>
+          <ListItemText primary="New" />
+        </ListItemButton>
+        </ListItem>
+        )}
+        {user.role === 'Seller' && user.isVerified === 'True' && (
+        <ListItem disablePadding>
+        <ListItemButton component={Link} to="/delivered">
+          <ListItemIcon>
+            <DoneAllIcon />
+          </ListItemIcon>
+          <ListItemText primary="Delivered" />
         </ListItemButton>
         </ListItem>
         )}
