@@ -176,7 +176,7 @@ namespace Backend.Services
             seller.VerificationStatus = VerificationStatus.Finished;
             await _unitOfWork.SaveChangesAsync();
 
-            await SendMail(seller.Email, "Registration accepted", $"Hello {seller.FirstName}." +
+            await SendMail("nikolinazotovic@gmail.com", "Registration accepted", $"Hello {seller.FirstName}." +
                 $" Administrator has accepted your registration request." +
                 $" You can now start using all application functionalities.");
         }
@@ -189,7 +189,7 @@ namespace Backend.Services
             seller.VerificationStatus = VerificationStatus.Finished;
             await _unitOfWork.SaveChangesAsync();
 
-            await SendMail(seller.Email, "Registration rejected", $"Hello {seller.FirstName}." +
+            await SendMail("nikolinazotovic@gmail.com", "Registration rejected", $"Hello {seller.FirstName}." +
                 $" Administrator has rejected your registration request.");
         }
 
