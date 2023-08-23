@@ -18,7 +18,7 @@ namespace Backend.Repositories
 
         public async Task CheckStatus(Order order)
         {
-            if (order.EstimatedDeliveryDate < DateTime.Now)
+            if (order.EstimatedDeliveryDate < DateTime.Now && order.OrderStatus == OrderStatus.Delivering)
             {
                 order.OrderStatus = OrderStatus.Delivered;
             }
