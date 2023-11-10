@@ -1,1 +1,1 @@
-# pusgs-projekat
+# Web aplikacija za online trgovinu
