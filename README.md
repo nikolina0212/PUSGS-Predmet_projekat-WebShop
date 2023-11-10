@@ -1,1 +1,1 @@
-# Web aplikacija za online trgovinu
+# Web aplikacija za online kupovinu
